@@ -24,10 +24,6 @@ namespace SpaLauncher.SpringCloudBus
             return base.SubscribeAsync(subscriptionId, (Func<T, Task>) OnSpringMessage, configure);
         }
 
-        private async Task HandleMessage<T>(T message, Func<T, Task> handler)
-        {
-        }
-
         public SpringRabbitBus(IConventions conventions,
             IAdvancedBus advancedBus,
             IExchangeDeclareStrategy exchangeDeclareStrategy,

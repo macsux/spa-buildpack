@@ -12,7 +12,7 @@ namespace SpaLauncher.SinglePageApp
             var config = endpoints.ServiceProvider.GetRequiredService<AppConfig>();
             return endpoints.MapGet(
                 pattern: "/config",
-                requestDelegate: async context => context.Response.WriteAsync(config.GetConfigJson()));
+                requestDelegate: async context => await context.Response.WriteAsync(config.GetConfigJson()));
         }
     }
 }

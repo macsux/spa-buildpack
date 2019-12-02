@@ -19,26 +19,30 @@ namespace SpaBuildpack
             var wwwRoot = Path.Combine(buildPath, "wwwroot");
             var buildpackDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "..");
             var launcherDir = Path.Combine(buildpackDir, "launcher");
-            Directory.Move(buildPath,cachePath);
+            var tmpFolder = Path.Combine(cachePath, "tmp");
+            Directory.Move(buildPath,tmpFolder);
             Directory.CreateDirectory(buildPath);
-            Directory.Move(cachePath, wwwRoot);
+            Directory.Move(tmpFolder, wwwRoot);
             Directory.CreateDirectory(cachePath);
             CopyAll(new DirectoryInfo(launcherDir),new DirectoryInfo(buildPath));
-            using (var commonFiles = File.OpenText(Path.Combine(buildpackDir, "commonFiles.txt")))
+            var sharedFiles = Path.Combine(buildpackDir, "commonFiles.txt");
+            using (var commonFiles = File.OpenText(sharedFiles))
             {
                 while (true)
                 {
                     var fileName = commonFiles.ReadLine();
                     if (fileName == null)
                         break;
-                    File.Copy(Path.Combine(buildpackDir, fileName), Path.Combine(launcherDir, fileName));
+                    var from = Path.Combine(buildpackDir, "bin", fileName);
+                    var to = Path.Combine(buildPath, fileName);
+                    File.Copy(from, to);
                 }
             }
         }
         
         public override string GetStartupCommand(string buildPath)
         {
-            return "SpaBuildpack";
+            return "./SpaLauncher";
         }
         
         

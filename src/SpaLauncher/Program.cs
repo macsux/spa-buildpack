@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Steeltoe.Extensions.Configuration.CloudFoundry;
 using Steeltoe.Extensions.Configuration.ConfigServer;
+using Steeltoe.Extensions.Configuration.Placeholder;
 using Steeltoe.Extensions.Logging.DynamicLogger;
 
 namespace SpaLauncher
@@ -14,7 +16,8 @@ namespace SpaLauncher
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(cfg => cfg.AddConfigServer())
+                .UseCloudFoundryHosting()
+                .ConfigureAppConfiguration(cfg => cfg.AddConfigServer().AddPlaceholderResolver())
                 .AddDynamicLogging()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }

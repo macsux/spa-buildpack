@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Steeltoe.Extensions.Configuration;
 using Steeltoe.Extensions.Configuration.ConfigServer;
 
 namespace SpaLauncher
@@ -14,10 +15,14 @@ namespace SpaLauncher
 
         public AppConfig(IConfiguration configuration)
         {
-
+            // we wanna create a new root with placeholder provider backed by only config server provider which we extract from application configuration
+            // this is so we don't publish sensitive config found in other config sources
             var root = (IConfigurationRoot) configuration;
-            var configServerProvider = root.Providers.OfType<ConfigServerConfigurationProvider>().Cast<IConfigurationProvider>().ToList();
-            _configuration = new ConfigurationRoot(configServerProvider);
+            var existingPlaceholder = root.Providers.OfType<PlaceholderResolverProvider>().First();
+            
+            var configServerProvider = existingPlaceholder.Providers.OfType<ConfigServerConfigurationProvider>().Cast<IConfigurationProvider>().ToList();
+            var placeholderProvider = new PlaceholderResolverProvider(configServerProvider);
+            _configuration = new ConfigurationRoot(new IConfigurationProvider[]{placeholderProvider});
         }
 
         public string GetConfigJson()
