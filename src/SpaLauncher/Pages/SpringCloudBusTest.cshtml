@@ -1,0 +1,17 @@
+@page
+<pre id="messages"></pre>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+var connection = new signalR.HubConnectionBuilder().withUrl("/springCloudBus").build();
+
+connection.on("NewMessage", function (messageType, message) {
+    var json = JSON.stringify(message, null, "\t");
+    document.getElementById("messages").innerHTML += "===" + messageType + "===\n" + json + "\n";
+});
+
+connection.start()
+    .catch(function (err) {
+    return console.error(err.toString());
+});
+
+</script>

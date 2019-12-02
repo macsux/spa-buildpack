@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0;net472</TargetFrameworks>
+    <RuntimeIdentifiers>linux-x64;win-x64</RuntimeIdentifiers>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <RootNamespace>SpaBuildpack</RootNamespace>
+    <AssemblyName>buildpack</AssemblyName>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+    
+</Project>
