@@ -5,16 +5,17 @@ using SpaLauncher.SpringCloudBus.Util;
 
 namespace SpaLauncher.SpringCloudBus
 {
-    public class SpringNodeNameResoler : INodeNameResoler
+    public class SpringServiceIdResolver : IServiceIdResolver
     {
         private readonly IConfiguration _configuration;
-        private readonly ServerPortAccessor _portAccessor;
+        private readonly IServerPortAccessor _portAccessor;
         private SpringPathMatcher _springPathMatcher = new SpringPathMatcher();
 
-        public SpringNodeNameResoler(IConfiguration configuration, ServerPortAccessor portAccessor)
+        public SpringServiceIdResolver(IConfiguration configuration, IServerPortAccessor portAccessor)
         {
             _configuration = configuration;
             _portAccessor = portAccessor;
+            _instanceId = new Lazy<string>(() => _configuration.GetValue<string>("vcap.application.instance_id") ?? Guid.NewGuid().ToString("N"));
         }
 
 
@@ -40,7 +41,9 @@ namespace SpaLauncher.SpringCloudBus
                 return index;
             }
         }
-        public string InstanceId => _configuration.GetValue<string>("vcap.application.instance_id") ?? Guid.NewGuid().ToString("N");
+
+        private Lazy<string> _instanceId;
+        public string InstanceId => _instanceId.Value;
 
         public string ServiceId => $"{AppName}.{Index}.{InstanceId}";
 

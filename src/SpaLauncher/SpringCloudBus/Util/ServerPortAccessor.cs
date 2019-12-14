@@ -6,7 +6,28 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 
 namespace SpaLauncher.SpringCloudBus.Util
 {
-    public class ServerPortAccessor
+    public interface IServerPortAccessor
+    {
+        int Port { get; }
+    }
+
+    public class SimpleServerPortAccessor : IServerPortAccessor
+    {
+        public int Port
+        {
+            get
+            {
+//                var portStr = Environment.GetEnvironmentVariable("PORT");
+//                if (portStr != null && int.TryParse(portStr, out var port))
+//                    return port;
+//                return 8080;
+                return 0;
+            }
+        }
+    }
+
+
+    public class ServerPortAccessor : IServerPortAccessor
     {
         private readonly IServer _server;
         private readonly Lazy<int> _port;

@@ -1,4 +1,5 @@
 using EasyNetQ;
+using EasyNetQ.Consumer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,10 +31,11 @@ namespace SpaLauncher.SpringCloudBus
             services.AddSingleton<ISerializer>(new JsonSerializer(SpringJsonSerializerSettings.Instance));
             services.AddSingleton<ITypeNameSerializer, SpringTypeNameSerializer>();
             services.AddSingleton<IConventions, SpringConventions>();
-            services.AddSingleton<INodeNameResoler, SpringNodeNameResoler>();
+            services.AddSingleton<IServiceIdResolver, SpringServiceIdResolver>();
             services.AddSingleton<IBus, SpringRabbitBus>();
             services.AddSingleton<ServerPortAccessor>();
             services.AddSingleton<IMessageSerializationStrategy, SpringMessageSerializationStrategy>();
+            services.AddSingleton<IHandlerCollectionFactory, SpringHandlerCollectionFactory>();
             
             services.AddSingleton<IHostedService, SpringBusEventHandlerService>(); // this is where all the message handlers live
             return services;

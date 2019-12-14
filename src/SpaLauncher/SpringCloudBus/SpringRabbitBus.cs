@@ -9,7 +9,7 @@ namespace SpaLauncher.SpringCloudBus
 {
     public class SpringRabbitBus : RabbitBus
     {
-        private readonly INodeNameResoler _nodeNameResoler;
+        private readonly IServiceIdResolver _serviceIdResolver;
 
         public override ISubscriptionResult SubscribeAsync<T>(string subscriptionId,
             Func<T, Task> onMessage, 
@@ -17,8 +17,8 @@ namespace SpaLauncher.SpringCloudBus
         {
             async Task OnSpringMessage(T message)
             {
-                if (message is RemoteApplicationEvent springBusMessage && !_nodeNameResoler.AddressedToMe(springBusMessage.DestinationService)) return;
-                await onMessage(message);
+                if (message is RemoteApplicationEvent springBusMessage && _serviceIdResolver.AddressedToMe(springBusMessage.DestinationService))
+                    await onMessage(message);
             }
 
             return base.SubscribeAsync(subscriptionId, (Func<T, Task>) OnSpringMessage, configure);
@@ -30,7 +30,7 @@ namespace SpaLauncher.SpringCloudBus
             IMessageDeliveryModeStrategy messageDeliveryModeStrategy,
             IRpc rpc,
             ISendReceive sendReceive,
-            ConnectionConfiguration connectionConfiguration, INodeNameResoler nodeNameResoler) : base(conventions,
+            ConnectionConfiguration connectionConfiguration, IServiceIdResolver serviceIdResolver) : base(conventions,
             advancedBus,
             exchangeDeclareStrategy,
             messageDeliveryModeStrategy,
@@ -38,7 +38,7 @@ namespace SpaLauncher.SpringCloudBus
             sendReceive,
             connectionConfiguration)
         {
-            _nodeNameResoler = nodeNameResoler;
+            _serviceIdResolver = serviceIdResolver;
         }
     }
 }

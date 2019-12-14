@@ -4,19 +4,17 @@ namespace SpaLauncher.SpringCloudBus.Messages
 {
     public abstract class RemoteApplicationEvent : ApplicationEvent
     {
-        private static object TRANSIENT_SOURCE = new object();
-
         public string OriginService { get; set; }
         public string DestinationService { get; set; }
         public Guid Id { get; set; }
 
-        protected RemoteApplicationEvent() : this(TRANSIENT_SOURCE,  null, null)
+        protected RemoteApplicationEvent() : this(null, null)
         {
         }
-        protected RemoteApplicationEvent(object source, string originService, string destinationService) : base(source)
+        protected RemoteApplicationEvent(string originService, string destinationService)
         {
             OriginService = originService;
-            if (destinationService == null) {
+            if (string.IsNullOrEmpty(destinationService)) {
                 destinationService = "**";
             }
 

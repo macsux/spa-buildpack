@@ -27,6 +27,7 @@ namespace SpaLauncher.SpringCloudBus
             properties.ContentType = "application/json";
             properties.MessageId = Guid.NewGuid().ToString();
             properties.DeliveryMode = 2;
+            properties.Priority = 0;
             if (message is ApplicationEvent eventMessage)
             {
                 properties.Timestamp = eventMessage.TimeStamp.ToEpochMillisececonds();
@@ -36,8 +37,8 @@ namespace SpaLauncher.SpringCloudBus
                 properties.Timestamp = DateTime.UtcNow.ToEpochMillisececonds();
             }
             
-            if (string.IsNullOrEmpty(properties.CorrelationId))
-                properties.CorrelationId = _correlationIdGenerator.GetCorrelationId();
+//            if (string.IsNullOrEmpty(properties.CorrelationId))
+//                properties.CorrelationId = _correlationIdGenerator.GetCorrelationId();
             return new SerializedMessage(properties, bytes);
         }
 

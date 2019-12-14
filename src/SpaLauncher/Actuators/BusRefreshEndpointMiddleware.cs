@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,7 @@ namespace SpaLauncher.Actuators
             BusRefreshEndpoint endpoint,
             IEnumerable<IManagementOptions> mgmtOptions,
             ILogger<BusRefreshEndpointMiddleware> logger = null)
-            : base(endpoint, mgmtOptions, logger: logger)
+            : base(endpoint, mgmtOptions, logger: logger, allowedMethods: new []{ HttpMethod.Post })
         {
             _next = next;
             _exactRequestPathMatching = false;

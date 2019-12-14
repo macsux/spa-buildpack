@@ -113,7 +113,7 @@ class Build : NukeBuild
     
     Target Publish => _ => _
         .Description("Packages buildpack in Cloud Foundry expected format into /artifacts directory")
-        .DependsOn(Restore)
+        .DependsOn(Restore, Clean)
         .Executes(() =>
         {
             var workDirectory = TemporaryDirectory / "pack";
@@ -162,7 +162,6 @@ class Build : NukeBuild
                 }
             }
 
-            //            CopyDirectoryRecursively(scriptsDirectory, workBinDirectory, DirectoryExistsPolicy.Merge);
             var tempZipFile = TemporaryDirectory / PackageZipName;
             
             ZipFile.CreateFromDirectory(workDirectory, tempZipFile, CompressionLevel.NoCompression, false);

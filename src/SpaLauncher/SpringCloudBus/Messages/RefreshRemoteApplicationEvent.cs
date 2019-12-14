@@ -6,7 +6,7 @@ namespace SpaLauncher.SpringCloudBus.Messages
         {
         }
 
-        public RefreshRemoteApplicationEvent(object source, string originService, string destinationService) : base(source, originService, destinationService)
+        public RefreshRemoteApplicationEvent(string originService, string destinationService) : base(originService, destinationService)
         {
         }
     }

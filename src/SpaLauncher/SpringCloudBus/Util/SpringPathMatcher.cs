@@ -31,13 +31,16 @@ public class SpringPathMatcher
 
         private  string EscapeAndReplace(string pattern)
         {
-
+            if (pattern == "**")
+            {
+                pattern = Seperator + pattern;
+            }
             if (pattern.EndsWith(Seperator))
             {
                 pattern += "**";
             }
 
-            pattern = Regex.Escape(pattern)
+            var pattern2 = Regex.Escape(pattern)
                 .Replace($@"{Seperator}\*\*/", $@"(.*[\{Seperator}])")
                 .Replace(@"\*\*/", "(.*)")
                 .Replace($@"{Seperator}\*\*", "(.*)")
@@ -47,7 +50,7 @@ public class SpringPathMatcher
                 .Replace(@"\{", "(")
                 .Replace(@",", "|");
 
-            return $"^{pattern}$";
+            return $"^{pattern2}$";
         }
 
     }

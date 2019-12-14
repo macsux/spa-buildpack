@@ -1,6 +1,6 @@
 namespace SpaLauncher.SpringCloudBus
 {
-    public interface INodeNameResoler
+    public interface IServiceIdResolver
     {
         string ServiceId { get; }
         bool AddressedToMe(string destination);

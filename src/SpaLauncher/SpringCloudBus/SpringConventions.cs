@@ -7,6 +7,8 @@ namespace SpaLauncher.SpringCloudBus
         public SpringConventions(ITypeNameSerializer typeNameSerializer) : base(typeNameSerializer)
         {
             ExchangeNamingConvention = type => "springCloudBus";
+//            TopicNamingConvention = type => "";
+            QueueNamingConvention = (msgType, subscriptionId) => subscriptionId;
         }
     }
 }

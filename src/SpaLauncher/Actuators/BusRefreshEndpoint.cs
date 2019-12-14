@@ -8,21 +8,20 @@ namespace SpaLauncher.Actuators
     public class BusRefreshEndpoint : AbstractEndpoint<string,string>
     {
         private readonly IBus _bus;
-        private readonly INodeNameResoler _nameResoler;
+        private readonly IServiceIdResolver _serviceIdResolver;
 
-        public BusRefreshEndpoint(IBusRefreshEndpointOptions options, IBus bus, INodeNameResoler nameResoler) : base(options)
+        public BusRefreshEndpoint(IBusRefreshEndpointOptions options, IBus bus, IServiceIdResolver serviceIdResolver) : base(options)
         {
             _bus = bus;
-            _nameResoler = nameResoler;
+            _serviceIdResolver = serviceIdResolver;
         }
 
         public override string Invoke(string destination)
         {
             var msg = new RefreshRemoteApplicationEvent(
-                null,
-                _nameResoler.ServiceId,
+                _serviceIdResolver.ServiceId,
                 destination);
-            _bus.Publish(msg);
+            _bus.Publish(msg, "springCloudBus");
             return string.Empty;
         }
     }
