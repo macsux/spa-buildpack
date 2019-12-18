@@ -6,6 +6,7 @@ using SpaLauncher.SinglePageApp;
 using SpaLauncher.SpringCloudBus;
 using Steeltoe.Management.CloudFoundry;
 using Steeltoe.Management.Endpoint;
+using Steeltoe.Management.Endpoint.Env;
 using Steeltoe.Management.Endpoint.Trace;
 using Steeltoe.Management.Hypermedia;
 
@@ -27,6 +28,7 @@ namespace SpaLauncher
             services.AddSingleton<AppConfig>();
             services.AddBusRefreshActuator(Configuration);
             services.AddCloudFoundryActuators(Configuration, MediaTypeVersion.V2, ActuatorContext.ActuatorAndCloudFoundry);
+            services.AddEnvActuator(Configuration);
 //            services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddRazorPages();
         }
@@ -37,6 +39,7 @@ namespace SpaLauncher
             app.UseFileServer(new FileServerOptions() { StaticFileOptions = { ServeUnknownFileTypes = true}});
             app.UseTraceActuator(MediaTypeVersion.V2);
             app.UseCloudFoundryActuators(MediaTypeVersion.V2, ActuatorContext.ActuatorAndCloudFoundry);
+            app.UseEnvActuator();
             app.UseRouting();
 
             app.UseBusRefreshActuator();

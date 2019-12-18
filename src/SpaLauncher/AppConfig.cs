@@ -3,32 +3,47 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Steeltoe.CloudFoundry.Connector;
+using Steeltoe.CloudFoundry.Connector.Services;
 using Steeltoe.Extensions.Configuration;
+using Steeltoe.Extensions.Configuration.CloudFoundry;
 using Steeltoe.Extensions.Configuration.ConfigServer;
 
 namespace SpaLauncher
 {
     public class AppConfig
     {
-        
         private readonly IConfiguration _configuration;
+
+        private readonly IConfiguration _safeConfiguration;
 
         public AppConfig(IConfiguration configuration)
         {
+            _configuration = configuration;
             // we wanna create a new root with placeholder provider backed by only config server provider which we extract from application configuration
             // this is so we don't publish sensitive config found in other config sources
             var root = (IConfigurationRoot) configuration;
             var existingPlaceholder = root.Providers.OfType<PlaceholderResolverProvider>().First();
             
-            var configServerProvider = existingPlaceholder.Providers.OfType<ConfigServerConfigurationProvider>().Cast<IConfigurationProvider>().ToList();
-            var placeholderProvider = new PlaceholderResolverProvider(configServerProvider);
-            _configuration = new ConfigurationRoot(new IConfigurationProvider[]{placeholderProvider});
+            var exposedProviders = existingPlaceholder.Providers
+                .Where(x => x is ConfigServerConfigurationProvider)
+                .ToList();
+            var placeholderProvider = new PlaceholderResolverProvider(exposedProviders);
+            _safeConfiguration = new ConfigurationRoot(new IConfigurationProvider[]{placeholderProvider});
         }
 
         public string GetConfigJson()
         {
 
-            return RemoveEmptyChildren(Serialize(_configuration)).ToString(Formatting.None);
+            var config = (JObject)Serialize(_safeConfiguration);
+            var sso = _configuration.GetSingletonServiceInfo<SsoServiceInfo>();
+            if (sso != null)
+            {
+                config.Add("SSO", JObject.FromObject(new SsoServiceInfo(sso.Id, sso.ClientId, null, sso.AuthDomain)));
+            }
+
+            return RemoveEmptyChildren(config).ToString(Formatting.None);
+                
         }
         private JToken Serialize(IConfiguration config)
         {
