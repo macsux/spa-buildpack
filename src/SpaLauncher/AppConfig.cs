@@ -19,6 +19,7 @@ namespace SpaLauncher
 
         public AppConfig(IConfiguration configuration)
         {
+            
             _configuration = configuration;
             // we wanna create a new root with placeholder provider backed by only config server provider which we extract from application configuration
             // this is so we don't publish sensitive config found in other config sources
@@ -39,10 +40,10 @@ namespace SpaLauncher
             var sso = _configuration.GetSingletonServiceInfo<SsoServiceInfo>();
             if (sso != null)
             {
-                config.Add("SSO", JObject.FromObject(new SsoServiceInfo(sso.Id, sso.ClientId, null, sso.AuthDomain)));
+                config.Add("sso", JObject.FromObject(new SsoServiceInfo(sso.Id, sso.ClientId, null, sso.AuthDomain)));
             }
 
-            return RemoveEmptyChildren(config).ToString(Formatting.None);
+            return JsonConvert.SerializeObject(RemoveEmptyChildren(config));
                 
         }
         private JToken Serialize(IConfiguration config)
@@ -52,7 +53,7 @@ namespace SpaLauncher
             {
                 if (child.Path.StartsWith("spring:cloud:config", StringComparison.InvariantCultureIgnoreCase))
                     continue;
-                obj.Add(child.Key, Serialize(child));
+                obj.Add(ToCamelCase(child.Key), Serialize(child));
             }
 
             if (!obj.HasValues && config is IConfigurationSection section)
@@ -60,6 +61,8 @@ namespace SpaLauncher
 
             return obj;
         }
+
+        private string ToCamelCase(string val) => Char.ToLowerInvariant(val[0]) + val.Substring(1);
 
         private object InferType(string value)
         {

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SpaLauncher.Actuators;
 using SpaLauncher.SinglePageApp;
 using SpaLauncher.SpringCloudBus;
@@ -31,6 +33,16 @@ namespace SpaLauncher
             services.AddEnvActuator(Configuration);
 //            services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddRazorPages();
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                },
+                Formatting = Formatting.None
+            };
+
         }
 
        
